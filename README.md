@@ -73,7 +73,7 @@ Client behavior:
 
 Below is a representative runtime view of the Modbus server and client during operation. The server redraws the register table after each update, and the client reads, writes, and reads back values in a cyclic test loop.
 
-![Modbus TCP Server/Client Live Output](doc/operation_example.svg)
+![Modbus TCP Server/Client Live Output](doc/operation_screenshot.png)
 
 ## 6. Modbus Address Mapping
 
