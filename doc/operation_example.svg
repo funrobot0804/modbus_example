@@ -19,7 +19,7 @@
   <text x="70" y="264" font-family="Consolas,Menlo,monospace" font-size="14" fill="#d5e8ff">Register table snapshot:</text>
   <text x="88" y="286" font-family="Consolas,Menlo,monospace" font-size="14" fill="#c1e7ff">#40001: 0001  #40002: 0000  #40003: 0000  #40004: 0000</text>
   <text x="88" y="306" font-family="Consolas,Menlo,monospace" font-size="14" fill="#c1e7ff">#40005: 0000  #40006: 0000  #40007: 0000  #40008: 0000</text>
-  <rect x="52" y="308" width="428" height="120" rx="12" fill="#05101b" stroke="#2f5ea0" stroke-width="1"/>
+  <rect x="52" y="308" width="428" height="160" rx="12" fill="#05101b" stroke="#2f5ea0" stroke-width="1"/>
   <text x="70" y="338" font-family="Consolas,Menlo,monospace" font-size="16" fill="#9ad7ff">Client Console (Cyclic Test)</text>
   <text x="70" y="370" font-family="Consolas,Menlo,monospace" font-size="14" fill="#d5e8ff">Connecting to 127.0.0.1:502, slave ID 1</text>
   <text x="70" y="392" font-family="Consolas,Menlo,monospace" font-size="14" fill="#85d18f">Read #40001 -> 0</text>
