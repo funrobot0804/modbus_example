@@ -69,14 +69,20 @@ Client behavior:
 - workflow: read current -> write new value -> readback
 - cycles target register from `#40001` to `#40040`, then wraps to `#40001`
 
-## 5. Modbus Address Mapping
+## 5. Live Demo Output
+
+Below is a representative runtime view of the Modbus server and client during operation. The server redraws the register table after each update, and the client reads, writes, and reads back values in a cyclic test loop.
+
+![Modbus TCP Server/Client Live Output](doc/operation_example.svg)
+
+## 6. Modbus Address Mapping
 
 This project uses common 4xxxx register notation; `modbus_tk` still uses zero-based offsets internally:
 
 - `#40001` -> offset `0`
 - `#40040` -> offset `39`
 
-## 6. Server Output Behavior
+## 7. Server Output Behavior
 
 The server is a PLC simulator with the following output behavior:
 
@@ -85,7 +91,7 @@ The server is a PLC simulator with the following output behavior:
 - redraws the full 40-register table after changes
 - uses red color to highlight changed cells
 
-## 7. Development History (Summary)
+## 8. Development History (Summary)
 
 1. Initial Modbus Server/Client implementation
 - Server created holding register block `#40001~#40040`
@@ -116,7 +122,7 @@ The server is a PLC simulator with the following output behavior:
 - Multiple Python processes could listen/connect on port `502`
 - Client could target another server instance, not the visible one
 
-## 8. Common Issues
+## 9. Common Issues
 
 ### 1) `ModuleNotFoundError: No module named 'modbus_tk'`
 
@@ -143,7 +149,7 @@ Check first:
 - Windows may require Administrator privileges to bind port `502`
 - For testing, you can use a non-privileged port (for example, `--port 1502`)
 
-## 9. Stop Running Processes
+## 10. Stop Running Processes
 
 Press `Ctrl + C` in server/client terminals to stop gracefully.
 
@@ -161,7 +167,7 @@ Then stop by PID:
 Stop-Process -Id <PID> -Force
 ```
 
-## 10. GitHub Upload Checklist
+## 11. GitHub Upload Checklist
 
 Recommended files:
 

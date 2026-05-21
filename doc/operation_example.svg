@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b1120"/>
+      <stop offset="100%" stop-color="#131c2d"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1000" height="520" fill="url(#bg)"/>
+  <rect x="24" y="24" width="952" height="472" rx="20" fill="#08101f" stroke="#3877ff" stroke-width="2"/>
+  <text x="52" y="58" font-family="Consolas,Menlo,monospace" font-size="24" fill="#7dd2ff">Modbus TCP PLC Simulator — Real runtime output</text>
+  <line x1="52" y1="68" x2="948" y2="68" stroke="#3b7bff" stroke-width="1" opacity="0.35"/>
+  <rect x="52" y="84" width="428" height="206" rx="12" fill="#05101b" stroke="#2f5ea0" stroke-width="1"/>
+  <text x="70" y="114" font-family="Consolas,Menlo,monospace" font-size="16" fill="#9ad7ff">Server Console (PLC Simulator)</text>
+  <text x="70" y="146" font-family="Consolas,Menlo,monospace" font-size="14" fill="#85d18f">Listening on 127.0.0.1:502, slave ID 1</text>
+  <text x="70" y="170" font-family="Consolas,Menlo,monospace" font-size="14" fill="#d5e8ff">Request: READ holding registers #40001 ~ #40001</text>
+  <text x="70" y="192" font-family="Consolas,Menlo,monospace" font-size="14" fill="#ffb46a">VALUE CHANGE -> #40001 = 1</text>
+  <text x="70" y="214" font-family="Consolas,Menlo,monospace" font-size="14" fill="#d5e8ff">Request: WRITE holding register #40001 = 1</text>
+  <text x="70" y="236" font-family="Consolas,Menlo,monospace" font-size="14" fill="#85d18f">Redraw table after register update</text>
+  <text x="70" y="264" font-family="Consolas,Menlo,monospace" font-size="14" fill="#d5e8ff">Register table snapshot:</text>
+  <text x="88" y="286" font-family="Consolas,Menlo,monospace" font-size="14" fill="#c1e7ff">#40001: 0001  #40002: 0000  #40003: 0000  #40004: 0000</text>
+  <text x="88" y="306" font-family="Consolas,Menlo,monospace" font-size="14" fill="#c1e7ff">#40005: 0000  #40006: 0000  #40007: 0000  #40008: 0000</text>
+  <rect x="52" y="308" width="428" height="120" rx="12" fill="#05101b" stroke="#2f5ea0" stroke-width="1"/>
+  <text x="70" y="338" font-family="Consolas,Menlo,monospace" font-size="16" fill="#9ad7ff">Client Console (Cyclic Test)</text>
+  <text x="70" y="370" font-family="Consolas,Menlo,monospace" font-size="14" fill="#d5e8ff">Connecting to 127.0.0.1:502, slave ID 1</text>
+  <text x="70" y="392" font-family="Consolas,Menlo,monospace" font-size="14" fill="#85d18f">Read #40001 -> 0</text>
+  <text x="70" y="414" font-family="Consolas,Menlo,monospace" font-size="14" fill="#ffb46a">Write #40001 = 1</text>
+  <text x="70" y="436" font-family="Consolas,Menlo,monospace" font-size="14" fill="#85d18f">Readback #40001 -> 1</text>
+  <rect x="500" y="84" width="428" height="344" rx="12" fill="#05101b" stroke="#2f5ea0" stroke-width="1"/>
+  <text x="520" y="114" font-family="Consolas,Menlo,monospace" font-size="16" fill="#9ad7ff">Realtime Change Highlight</text>
+  <text x="520" y="148" font-family="Consolas,Menlo,monospace" font-size="14" fill="#d5e8ff">Register table redraw with active update marker</text>
+  <rect x="520" y="176" width="376" height="27" rx="6" fill="#183f3f"/>
+  <text x="536" y="196" font-family="Consolas,Menlo,monospace" font-size="14" fill="#7af8ad">#40001: 0001  #40002: 0000  #40003: 0000  #40004: 0000</text>
+  <rect x="520" y="214" width="376" height="27" rx="6" fill="#0b1f2f"/>
+  <text x="536" y="234" font-family="Consolas,Menlo,monospace" font-size="14" fill="#d5e8ff">#40005: 0000  #40006: 0000  #40007: 0000  #40008: 0000</text>
+  <rect x="520" y="252" width="376" height="27" rx="6" fill="#0b1f2f"/>
+  <text x="536" y="272" font-family="Consolas,Menlo,monospace" font-size="14" fill="#d5e8ff">#40009: 0000  #40010: 0000  #40011: 0000  #40012: 0000</text>
+  <rect x="520" y="290" width="376" height="27" rx="6" fill="#0b1f2f"/>
+  <text x="536" y="310" font-family="Consolas,Menlo,monospace" font-size="14" fill="#d5e8ff">#40013: 0000  #40014: 0000  #40015: 0000  #40016: 0000</text>
+  <rect x="520" y="328" width="376" height="27" rx="6" fill="#0b1f2f"/>
+  <text x="536" y="348" font-family="Consolas,Menlo,monospace" font-size="14" fill="#d5e8ff">#40017: 0000  #40018: 0000  #40019: 0000  #40020: 0000</text>
+  <text x="520" y="392" font-family="Consolas,Menlo,monospace" font-size="14" fill="#c1e7ff">Changed value cells are highlighted in color to indicate live updates.</text>
+  <text x="520" y="418" font-family="Consolas,Menlo,monospace" font-size="14" fill="#c1e7ff">The simulation shows read/write cycles and table redraws in real time.</text>
+</svg>
