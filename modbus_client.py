@@ -178,6 +178,12 @@ def main() -> None:
             time.sleep(args.interval)
     except KeyboardInterrupt:
         print("\n[CLIENT] Stopped by user")
+    finally:
+        try:
+            master.close()
+            print("[CLIENT] Connection closed")
+        except Exception as exc:
+            print(f"[CLIENT] Error closing connection: {exc}")
 
 
 if __name__ == "__main__":

@@ -12,9 +12,10 @@ Address mapping note:
 import argparse
 from datetime import datetime
 import signal
+import socket
 import sys
 import time
-from typing import Iterable, List, Sequence, Set
+from typing import Iterable, List, Sequence, Set, Tuple
 
 import modbus_tk.hooks as hooks
 from colorama import just_fix_windows_console
@@ -92,7 +93,12 @@ def maybe_color(text: str, color: str, enabled: bool) -> str:
     return f"{color}{text}{RESET}"
 
 
-def render_register_table(values: Sequence[int], changed_offsets: Set[int], color_enabled: bool) -> str:
+def render_register_table(
+    values: Sequence[int],
+    changed_offsets: Set[int],
+    color_enabled: bool,
+    active_clients: Sequence[str],
+) -> str:
     """
     Render #40001~#40040 in an ASCII table.
 
@@ -105,10 +111,15 @@ def render_register_table(values: Sequence[int], changed_offsets: Set[int], colo
 
     horizontal = "+" + "+".join(["-" * cell_width] * col_count) + "+"
     title = "PLC Holding Register Monitor (#40001~#40040)"
+    client_count = len(active_clients)
+    client_status = f"Clients: {client_count}"
+    client_ips = ", ".join(active_clients) if active_clients else "No connected clients"
 
     lines: List[str] = []
     lines.append(horizontal)
     lines.append("|" + title.center(cell_width * col_count + (col_count - 1)) + "|")
+    lines.append("|" + client_status.center(cell_width * col_count + (col_count - 1)) + "|")
+    lines.append("|" + client_ips.center(cell_width * col_count + (col_count - 1)) + "|")
     lines.append(horizontal)
 
     for row in range(row_count):
@@ -205,7 +216,12 @@ def main() -> None:
     # Keep one baseline snapshot; we use it to detect value changes and refresh table.
     previous_values = tuple(slave.get_values("hr", 0, 40))
     print()
-    print(render_register_table(previous_values, changed_offsets=set(), color_enabled=color_enabled))
+    print(render_register_table(
+        previous_values,
+        changed_offsets=set(),
+        color_enabled=color_enabled,
+        active_clients=[],
+    ))
 
     def on_before_handle_request(hook_args):
         """Hook callback fired for each incoming Modbus request."""
@@ -227,6 +243,78 @@ def main() -> None:
         print(f"[SERVER] Warning: could not install request hook: {exc}")
         print("[SERVER] Register change table will still update on value changes")
 
+    active_clients = {}
+    CLIENT_IDLE_TIMEOUT = 30.0
+
+    def on_client_connect(hook_args):
+        if not isinstance(hook_args, tuple) or len(hook_args) != 3:
+            return
+        _server, client_sock, address = hook_args
+        active_clients[client_sock.fileno()] = (address, time.monotonic(), client_sock)
+        print(maybe_color(
+            f"[{timestamp()}] CLIENT CONNECTED {address[0]}:{address[1]} total={len(active_clients)}",
+            GREEN,
+            color_enabled,
+        ))
+
+    def on_client_disconnect(hook_args):
+        if not isinstance(hook_args, tuple) or len(hook_args) < 2:
+            return
+        _server, client_sock = hook_args
+        fileno = client_sock.fileno()
+        entry = active_clients.pop(fileno, None)
+        count = len(active_clients)
+        if entry is not None:
+            address, _, _ = entry
+            print(maybe_color(
+                f"[{timestamp()}] CLIENT DISCONNECTED {address[0]}:{address[1]} total={count}",
+                YELLOW,
+                color_enabled,
+            ))
+        else:
+            print(maybe_color(
+                f"[{timestamp()}] CLIENT DISCONNECTED socket={fileno} total={count}",
+                YELLOW,
+                color_enabled,
+            ))
+
+    def on_after_recv(hook_args):
+        if not isinstance(hook_args, tuple) or len(hook_args) != 3:
+            return
+        _server, client_sock, _request = hook_args
+        fileno = client_sock.fileno()
+        if fileno in active_clients:
+            address, _, sock = active_clients[fileno]
+            active_clients[fileno] = (address, time.monotonic(), sock)
+
+    def cleanup_idle_clients() -> None:
+        now = time.monotonic()
+        for fileno, (address, last_seen, sock) in list(active_clients.items()):
+            if now - last_seen > CLIENT_IDLE_TIMEOUT:
+                try:
+                    sock.close()
+                except Exception:
+                    pass
+                active_clients.pop(fileno, None)
+                try:
+                    if sock in server._sockets:
+                        server._sockets.remove(sock)
+                except Exception:
+                    pass
+                print(maybe_color(
+                    f"[{timestamp()}] CLIENT TIMEOUT {address[0]}:{address[1]} total={len(active_clients)}",
+                    YELLOW,
+                    color_enabled,
+                ))
+
+    try:
+        hooks.install_hook("modbus_tcp.TcpServer.on_connect", on_client_connect)
+        hooks.install_hook("modbus_tcp.TcpServer.on_disconnect", on_client_disconnect)
+        hooks.install_hook("modbus_tcp.TcpServer.after_recv", on_after_recv)
+        print(maybe_color("[SERVER] Connection hooks installed", GREEN, color_enabled))
+    except Exception as exc:
+        print(f"[SERVER] Warning: could not install connection hooks: {exc}")
+
     def shutdown_handler(signum, frame):
         """Gracefully stop server when Ctrl+C or termination signal is received."""
         del signum, frame
@@ -241,6 +329,7 @@ def main() -> None:
     # Keep the main thread alive while the server handles requests internally.
     try:
         while True:
+            cleanup_idle_clients()
             current_values = tuple(slave.get_values("hr", 0, 40))
             changed_offsets = collect_changed_offsets(previous_values, current_values)
 
@@ -250,7 +339,15 @@ def main() -> None:
                     f"#{offset_to_register_number(offset)}" for offset in sorted(changed_offsets)
                 )
                 print(maybe_color(f"[{timestamp()}] VALUE CHANGE -> {changed_text}", GREEN, color_enabled))
-                print(render_register_table(current_values, changed_offsets, color_enabled))
+                active_list = [f"{addr[0]}:{addr[1]}" for addr in active_clients.values()]
+                print(
+                    render_register_table(
+                        current_values,
+                        changed_offsets,
+                        color_enabled,
+                        active_clients=active_list,
+                    )
+                )
                 previous_values = current_values
 
             time.sleep(0.2)

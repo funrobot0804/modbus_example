@@ -69,6 +69,16 @@ Client behavior:
 - workflow: read current -> write new value -> readback
 - cycles target register from `#40001` to `#40040`, then wraps to `#40001`
 
+### Monitor full register table
+
+You can also use `modbus_monitor.py` to poll and display the entire register table in a neatly aligned ASCII layout on every interval.
+
+```bash
+python modbus_monitor.py --host 127.0.0.1 --port 502 --slave-id 1 --interval 1.0
+```
+
+Both client and monitor close their Modbus TCP connection cleanly when stopped, which helps prevent server-side socket resources from being held open.
+
 ## 5. Live Demo Output
 
 Below is a representative runtime view of the Modbus server and client during operation. The server redraws the register table after each update, and the client reads, writes, and reads back values in a cyclic test loop.
